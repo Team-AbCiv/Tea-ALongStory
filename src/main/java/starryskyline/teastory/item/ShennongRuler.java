@@ -34,8 +34,9 @@ public class ShennongRuler extends ItemSword
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName("shennong_ruler");
 	}
-	
-	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean b)
+
+	@Override
+	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List<String> list, boolean b)
     {
         list.add(I18n.translateToLocal("teastory.tooltip.shennong_ruler"));
     }
@@ -49,14 +50,15 @@ public class ShennongRuler extends ItemSword
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity)
     {
-		if(!player.worldObj.isRemote)
+		if(!player.world.isRemote)
         {
 		    ((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.POISON, 100, 1));
         }
         return false;
     }
-	
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+
+    @Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
     {
 		if(!worldIn.isRemote)
         {
@@ -64,12 +66,13 @@ public class ShennongRuler extends ItemSword
         }
 		if(!playerIn.capabilities.isCreativeMode)
 		{
+			ItemStack itemStackIn = playerIn.getHeldItem(handIn);
 		    itemStackIn.setItemDamage(itemStackIn.getItemDamage() + 5);
 		    if (itemStackIn.getItemDamage() > 768)
 		    {
-		    	--itemStackIn.stackSize;
+		    	itemStackIn.shrink(1);
 		    }
 		}
-        return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+        return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }
 }

@@ -1,21 +1,13 @@
 package starryskyline.teastory.client.gui;
 
-import java.io.IOException;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.Container;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import starryskyline.teastory.TeaStory;
 import starryskyline.teastory.inventory.ContainerTeaStove;
-import starryskyline.teastory.tileentity.TileEntityTeaStove;
 
 @SideOnly(Side.CLIENT)
 public class GuiContainerTeaStove extends GuiContainer
@@ -72,6 +64,6 @@ public class GuiContainerTeaStove extends GuiContainer
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
         String title = I18n.translateToLocal("teastory.container.tea_stove");
-        this.fontRendererObj.drawString(title, (this.xSize - this.fontRendererObj.getStringWidth(title)) / 2, 6, 0x404040);
+        this.fontRenderer.drawString(title, (this.xSize - this.fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
     }
 }

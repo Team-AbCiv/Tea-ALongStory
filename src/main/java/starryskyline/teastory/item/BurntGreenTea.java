@@ -4,15 +4,11 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.ItemSoup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import starryskyline.teastory.common.ConfigLoader;
-import starryskyline.teastory.creativetab.CreativeTabsLoader;
 import starryskyline.teastory.potion.PotionLoader;
 
 public class BurntGreenTea extends ItemTeaDrink
@@ -21,12 +17,14 @@ public class BurntGreenTea extends ItemTeaDrink
     {
         super("burnt_green_tea");
     }
-	
-	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean b)
+
+    @Override
+	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List<String> list, boolean b)
     {
         list.add(I18n.translateToLocal("teastory.tooltip.burnt_green_tea"));
     }
 
+    @Override
     protected void onFoodEaten(ItemStack itemstack, World world, EntityPlayer entityplayer)
     {
         if(!world.isRemote)

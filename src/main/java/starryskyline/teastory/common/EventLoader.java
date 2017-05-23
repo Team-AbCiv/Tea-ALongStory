@@ -3,31 +3,17 @@ package starryskyline.teastory.common;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import starryskyline.teastory.TeaStory;
 import starryskyline.teastory.achievement.AchievementLoader;
@@ -54,23 +40,22 @@ public class EventLoader
             if(theblock == Blocks.LEAVES || theblock == Blocks.LEAVES2 || OreDictionary.getOres("treeLeaves").contains(new ItemStack(theblock)))
             {
                 BlockLeaves leaves = (BlockLeaves)theblock;
-                if(((Boolean)event.getState().getValue(PropertyBool.create("decayable"))).booleanValue())
+                if(event.getState().getValue(PropertyBool.create("decayable")))
                 {
                 	int rand = event.getWorld().rand.nextInt(200);
                 	if(rand == 0)
                 	{
                         EntityItem entityitem = new EntityItem(event.getWorld(), (double)event.getPos().getX(), (double)event.getPos().getY(), (double)event.getPos().getZ(), new ItemStack(ItemLoader.tea_seeds, 1));
-                        event.getWorld().spawnEntityInWorld(entityitem);
+                        event.getWorld().spawnEntity(entityitem);
                 	}
                 	else if(rand >= 190)
                 	{
                 		EntityItem entityitem = new EntityItem(event.getWorld(), (double)event.getPos().getX(), (double)event.getPos().getY(), (double)event.getPos().getZ(), new ItemStack(ItemLoader.broken_tea, 1));
-                        event.getWorld().spawnEntityInWorld(entityitem);
+                        event.getWorld().spawnEntity(entityitem);
                 	}
                 }
             }
     	}
-    	else return;
     }
     
     @SubscribeEvent
@@ -82,18 +67,18 @@ public class EventLoader
             if(theblock == Blocks.LEAVES || theblock == Blocks.LEAVES2 || OreDictionary.getOres("treeLeaves").contains(new ItemStack(theblock)))
             {
                 BlockLeaves leaves = (BlockLeaves)theblock;
-                if(((Boolean)event.getState().getValue(PropertyBool.create("decayable"))).booleanValue())
+                if(event.getState().getValue(PropertyBool.create("decayable")))
                 {
                 	int rand = event.getWorld().rand.nextInt(200);
                 	if(rand == 0)
                 	{
                         EntityItem entityitem = new EntityItem(event.getWorld(), (double)event.getPos().getX(), (double)event.getPos().getY(), (double)event.getPos().getZ(), new ItemStack(ItemLoader.tea_seeds, 1));
-                        event.getWorld().spawnEntityInWorld(entityitem);
+                        event.getWorld().spawnEntity(entityitem);
                 	}
                 	else if(rand >=190)
                 	{
                 		EntityItem entityitem = new EntityItem(event.getWorld(), (double)event.getPos().getX(), (double)event.getPos().getY(), (double)event.getPos().getZ(), new ItemStack(ItemLoader.broken_tea, 1));
-                        event.getWorld().spawnEntityInWorld(entityitem);
+                        event.getWorld().spawnEntity(entityitem);
                 	}
                 }
             }
@@ -103,7 +88,7 @@ public class EventLoader
     @SubscribeEvent
     public void onLivingHurt(LivingHurtEvent event)
     {
-        if (!event.getEntityLiving().worldObj.isRemote)
+        if (!event.getEntityLiving().world.isRemote)
         {
         	PotionEffect effect1 = event.getEntityLiving().getActivePotionEffect(PotionLoader.PotionAgility);
             if (effect1 != null)
@@ -130,7 +115,7 @@ public class EventLoader
     @SubscribeEvent
     public void onPlayerAttack(AttackEntityEvent event)
     {
-    	if (!event.getEntityLiving().worldObj.isRemote)
+    	if (!event.getEntityLiving().world.isRemote)
     	{
         	PotionEffect effect = event.getEntityPlayer().getActivePotionEffect(PotionLoader.PotionLifeDrain);
         	if (effect != null)
@@ -202,7 +187,7 @@ public class EventLoader
     {
     	if(ConfigLoader.info)
     	{
-    	    event.player.addChatMessage(new TextComponentTranslation("teastory.info.welcome.1", "\u00a7a" + TeaStory.VERSION));
+    	    event.player.sendMessage(new TextComponentTranslation("teastory.info.welcome.1", "\u00a7a" + TeaStory.VERSION));
     	}
     }
 }

@@ -24,11 +24,9 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -73,14 +71,15 @@ public class TeaStove extends BlockContainer
     }
 	
 	@Override
-	public ArrayList getDrops(IBlockAccess world, BlockPos pos, IBlockState blockstate, int fortune)
+	public ArrayList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState blockstate, int fortune)
 	{
-    	ArrayList drops = new ArrayList();
+    	ArrayList<ItemStack> drops = new ArrayList<>();
 	    drops.add(new ItemStack(BlockLoader.tea_stove, 1));
 		return drops;
 	}
-	
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (!worldIn.isRemote)
         {
@@ -106,23 +105,23 @@ public class TeaStove extends BlockContainer
             switch (enumfacing)
             {
                 case WEST:
-                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 - d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
-                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 - d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
+                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 - d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D);
+                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 - d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D);
                     break;
                 case EAST:
-                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
-                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
+                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D);
+                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D);
                     break;
                 case NORTH:
-                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1, d2 - d3, 0.0D, 0.0D, 0.0D, new int[0]);
-                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1, d2 - d3, 0.0D, 0.0D, 0.0D, new int[0]);
+                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1, d2 - d3, 0.0D, 0.0D, 0.0D);
+                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1, d2 - d3, 0.0D, 0.0D, 0.0D);
                     break;
                 case SOUTH:
-                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1, d2 + d3, 0.0D, 0.0D, 0.0D, new int[0]);
-                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1, d2 + d3, 0.0D, 0.0D, 0.0D, new int[0]);
+                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1, d2 + d3, 0.0D, 0.0D, 0.0D);
+                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1, d2 + d3, 0.0D, 0.0D, 0.0D);
             }
-            worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1 + 1.1D, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
-            worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1 + 0.8D, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
+            worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1 + 1.1D, d2 + d4, 0.0D, 0.0D, 0.0D);
+            worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1 + 0.8D, d2 + d4, 0.0D, 0.0D, 0.0D);
         }
     }
 	
@@ -136,7 +135,7 @@ public class TeaStove extends BlockContainer
     public IBlockState getStateFromMeta(int meta)
     {
         EnumFacing facing = EnumFacing.getHorizontal(meta & 3);
-        Boolean burning = Boolean.valueOf((meta & 4) != 0);
+        boolean burning = (meta & 4) != 0;
         return this.getDefaultState().withProperty(FACING, facing);
     }
 
@@ -149,22 +148,22 @@ public class TeaStove extends BlockContainer
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list)
     {
         list.add(new ItemStack(BlockLoader.tea_stove, 1, 0));
     }
-    
-    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
+
+    @Override // Replace the old getItem, in accordance to forge
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
     {
         return new ItemStack(BlockLoader.tea_stove);
     }
 
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
-            int meta, EntityLivingBase placer)
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand)
     {
     	((EntityPlayer) placer).addStat(AchievementLoader.teaStove);
-        IBlockState origin = super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
+        IBlockState origin = super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
         return origin.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
     }
     
@@ -180,28 +179,28 @@ public class TeaStove extends BlockContainer
 
             for (int i = inventory0.getSlots() - 1; i >= 0; --i)
             {
-                if (inventory0.getStackInSlot(i) != null)
+                if (!inventory0.getStackInSlot(i).isEmpty())
                 {
                     Block.spawnAsEntity(worldIn, pos, inventory0.getStackInSlot(i));
-                    ((IItemHandlerModifiable) inventory0).setStackInSlot(i, null);
+                    ((IItemHandlerModifiable) inventory0).setStackInSlot(i, ItemStack.EMPTY);
                 }
             }
 
             for (int i = inventory1.getSlots() - 1; i >= 0; --i)
             {
-                if (inventory1.getStackInSlot(i) != null)
+                if (!inventory0.getStackInSlot(i).isEmpty())
                 {
                     Block.spawnAsEntity(worldIn, pos, inventory1.getStackInSlot(i));
-                    ((IItemHandlerModifiable) inventory1).setStackInSlot(i, null);
+                    ((IItemHandlerModifiable) inventory1).setStackInSlot(i, ItemStack.EMPTY);
                 }
             }
         
             for (int i = inventory3.getSlots() - 1; i >= 0; --i)
             {
-                if (inventory3.getStackInSlot(i) != null)
+                if (!inventory0.getStackInSlot(i).isEmpty())
                 {
                     Block.spawnAsEntity(worldIn, pos, inventory3.getStackInSlot(i));
-                    ((IItemHandlerModifiable) inventory3).setStackInSlot(i, null);
+                    ((IItemHandlerModifiable) inventory3).setStackInSlot(i, ItemStack.EMPTY);
                 }
             }
         }

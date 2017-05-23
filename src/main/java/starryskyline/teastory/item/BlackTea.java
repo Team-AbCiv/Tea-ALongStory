@@ -8,16 +8,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.ItemSoup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import starryskyline.teastory.achievement.AchievementLoader;
 import starryskyline.teastory.common.ConfigLoader;
-import starryskyline.teastory.creativetab.CreativeTabsLoader;
 import starryskyline.teastory.potion.PotionLoader;
 
 public class BlackTea extends ItemTeaDrink
@@ -27,7 +23,7 @@ public class BlackTea extends ItemTeaDrink
 		super("black_tea");
 	}
 	
-	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean b)
+	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List<String> list, boolean b)
     {
         list.add(I18n.translateToLocal("teastory.tooltip.black_tea"));
     }
@@ -66,7 +62,7 @@ public class BlackTea extends ItemTeaDrink
         {
         	if (!entityplayer.inventory.addItemStackToInventory(new ItemStack(ItemLoader.tea_residue, 1, 1)))
             {
-                world.spawnEntityInWorld(new EntityItem(world, entityplayer.posX + 0.5D, entityplayer.posY + 1.5D, entityplayer.posZ + 0.5D, 
+                world.spawnEntity(new EntityItem(world, entityplayer.posX + 0.5D, entityplayer.posY + 1.5D, entityplayer.posZ + 0.5D,
                 		new ItemStack(ItemLoader.tea_residue, 1, 1)));
             }
         }

@@ -50,7 +50,7 @@ public class Teaplant extends BlockCrops
     {
         if (worldIn.getLightFromNeighbors(pos.up()) >= 9)
         {
-            int i = ((Integer)state.getValue(AGE)).intValue();
+            int i = state.getValue(AGE);
             if (i < 7)
             {
                 float f = getGrowthChance(this, worldIn, pos);
@@ -59,7 +59,7 @@ public class Teaplant extends BlockCrops
                 {
                     if (rand.nextInt((int)(25.0F / f) + 1) == 0)
                     {
-                        worldIn.setBlockState(pos, state.withProperty(AGE, Integer.valueOf(i + 1)), 2);
+                        worldIn.setBlockState(pos, state.withProperty(AGE, i + 1), 2);
                     }
                 }
             }
@@ -89,7 +89,7 @@ public class Teaplant extends BlockCrops
     }
     
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (worldIn.isRemote)
         {
@@ -97,12 +97,12 @@ public class Teaplant extends BlockCrops
         }
         else
         {
-            if (((Integer)state.getValue(AGE)).intValue() == 7)
+            if (state.getValue(AGE) == 7)
         	{
             	playerIn.addStat(AchievementLoader.teaLeaf);
             	playerIn.addStat(AchievementLoader.teaPlant);
     	    	worldIn.setBlockState(pos, BlockLoader.teaplant.getStateFromMeta(4));
-    	    	worldIn.spawnEntityInWorld(new EntityItem(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, new ItemStack(ItemLoader.tea_leaf, playerIn.getRNG().nextInt(4) + 1)));
+    	    	worldIn.spawnEntity(new EntityItem(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, new ItemStack(ItemLoader.tea_leaf, playerIn.getRNG().nextInt(4) + 1)));
     	        return true;
         	}
             else return false;
@@ -110,9 +110,9 @@ public class Teaplant extends BlockCrops
     }
     
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn)
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
     {
-        super.neighborChanged(state, worldIn, pos, blockIn);
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
         if (!this.canSustainBush(worldIn.getBlockState(pos.down())))
         {
             this.dropBlockAsItem(worldIn, pos, state, 0);

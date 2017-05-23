@@ -30,20 +30,20 @@ public class PotionPhotosynthesis extends Potion
         if (this == PotionLoader.PotionPhotosynthesis)
         {
         	int k = 60 >> p_76397_2_;
-            return k > 0 ? p_76397_1_ % k == 0 : true;
+            return k <= 0 || p_76397_1_ % k == 0;
         }
         return false;
     }
     
     public void performEffect(EntityLivingBase entityLivingBaseIn, int p_76394_2_)
     {
-    	if(!entityLivingBaseIn.worldObj.isRemote)
+    	if(!entityLivingBaseIn.world.isRemote)
     	{
     	    if (this == PotionLoader.PotionPhotosynthesis)
             {
-    	    	boolean isDaytime = entityLivingBaseIn.worldObj.getWorldTime() % 24000L < 12000L;
+    	    	boolean isDaytime = entityLivingBaseIn.world.getWorldTime() % 24000L < 12000L;
         		BlockPos pos = entityLivingBaseIn.getPosition();
-        		if ((!entityLivingBaseIn.worldObj.isRainingAt(pos)) && ((isDaytime && (entityLivingBaseIn.worldObj.getLight(pos) >= 13 - 2 * p_76394_2_)) || ((!isDaytime) && (entityLivingBaseIn.worldObj.getLightFor(EnumSkyBlock.BLOCK, pos) >= 13 - 2 * p_76394_2_))))
+        		if ((!entityLivingBaseIn.world.isRainingAt(pos)) && ((isDaytime && (entityLivingBaseIn.world.getLight(pos) >= 13 - 2 * p_76394_2_)) || ((!isDaytime) && (entityLivingBaseIn.world.getLightFor(EnumSkyBlock.BLOCK, pos) >= 13 - 2 * p_76394_2_))))
                 {
                 	if (p_76394_2_ > 2)
                 	{

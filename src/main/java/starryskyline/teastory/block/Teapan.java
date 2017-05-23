@@ -1,10 +1,9 @@
 package starryskyline.teastory.block;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -18,11 +17,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -65,9 +64,9 @@ public class Teapan extends Block
     }
 	
 	@Override
-	public ArrayList getDrops(IBlockAccess world, BlockPos pos, IBlockState blockstate, int fortune)
+	public ArrayList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, @Nonnull IBlockState blockstate, int fortune)
 	{
-	    ArrayList drops = new ArrayList();
+	    ArrayList<ItemStack> drops = new ArrayList<>();
 	    drops.add(new ItemStack(BlockLoader.teapan, 1));
 	    int meta = BlockLoader.teapan.getMetaFromState(blockstate);
 	    if (meta == 1)
@@ -156,15 +155,15 @@ public class Teapan extends Block
     }
 	
 	@Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand)
     {
 		((EntityPlayer) placer).addStat(AchievementLoader.teaBasket);
-		return super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
+		return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
     }
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item itemIn, CreativeTabs tab, List list) {
+	public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
 	    list.add(new ItemStack(itemIn, 1, 0));
 	}
 	
@@ -203,17 +202,19 @@ public class Teapan extends Block
         EnumType type = (EnumType) state.getValue(TYPE);
         return type.getID();
     }
-    
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (worldIn.isRemote)
         {
         	switch(getMetaFromState(worldIn.getBlockState(pos)))
         	{
         	    case 0:
-        	    	if ((heldItem == null) || !(heldItem.getItem() == ItemLoader.half_dried_tea && heldItem.stackSize >=8) && !(heldItem.getItem() == ItemLoader.tea_leaf && heldItem.stackSize >=8) && !(heldItem.getItem() == ItemLoader.wet_tea && heldItem.stackSize >=8) && (Block.getBlockFromItem(heldItem.getItem()) != BlockLoader.teapan))
+        	    	ItemStack heldItem = playerIn.getHeldItem(hand);
+        	    	if (!heldItem.isEmpty() || !(heldItem.getItem() == ItemLoader.half_dried_tea && heldItem.getCount() >= 8) && !(heldItem.getItem() == ItemLoader.tea_leaf && heldItem.getCount() >= 8) && !(heldItem.getItem() == ItemLoader.wet_tea && heldItem.getCount() >= 8) && (Block.getBlockFromItem(heldItem.getItem()) != BlockLoader.teapan))
         	    	{
-        	    		playerIn.addChatMessage(new TextComponentTranslation("teastory.teapan.message"));
+        	    		playerIn.sendMessage(new TextComponentTranslation("teastory.teapan.message"));
         	    	}
         	    	return true;
         	    default:
@@ -227,36 +228,37 @@ public class Teapan extends Block
         	    case 1:
         	       	worldIn.setBlockState(pos, BlockLoader.teapan.getDefaultState());
         	        ItemStack itemstack1 = new ItemStack(ItemLoader.tea_leaf, 8);
-        	        worldIn.spawnEntityInWorld(new EntityItem(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack1));
+        	        worldIn.spawnEntity(new EntityItem(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack1));
                     return true;
         	    case 2:
         	       	worldIn.setBlockState(pos, BlockLoader.teapan.getDefaultState());
                     ItemStack itemstack2 = new ItemStack(ItemLoader.dried_tea, 8);
-                    worldIn.spawnEntityInWorld(new EntityItem(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack2));
+                    worldIn.spawnEntity(new EntityItem(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack2));
         	        return true;
         	    case 3:
         	    	worldIn.setBlockState(pos, BlockLoader.teapan.getDefaultState());
         	    	playerIn.addStat(AchievementLoader.halfDriedTea);
                     ItemStack itemstack3 = new ItemStack(ItemLoader.half_dried_tea, 8);
-                    worldIn.spawnEntityInWorld(new EntityItem(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack3));
+                    worldIn.spawnEntity(new EntityItem(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack3));
                     return true;
         	    case 4:
         	    	worldIn.setBlockState(pos, BlockLoader.teapan.getDefaultState());
         	    	playerIn.addStat(AchievementLoader.wetTea);
                     ItemStack itemstack4 = new ItemStack(ItemLoader.wet_tea, 8);
-                    worldIn.spawnEntityInWorld(new EntityItem(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack4));
+                    worldIn.spawnEntity(new EntityItem(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack4));
                     return true;
                 default:
-                	if (heldItem != null)
+                	ItemStack heldItem = playerIn.getHeldItem(hand);
+                	if (!heldItem.isEmpty())
                     {
-                		if (heldItem.stackSize >=8)
+                		if (heldItem.getCount() >= 8)
                 		{
                 	    	if (heldItem.getItem() == ItemLoader.tea_leaf)
                     		{
                 	                worldIn.setBlockState(pos, BlockLoader.teapan.getStateFromMeta(1));
                 	                if (!playerIn.capabilities.isCreativeMode)
                                     {
-                	            	    heldItem.stackSize = heldItem.stackSize - 8;
+                	            	    heldItem.shrink(8);
                                     }
         	                        return true;
                 	    	}
@@ -265,7 +267,7 @@ public class Teapan extends Block
                 		        worldIn.setBlockState(pos, BlockLoader.teapan.getStateFromMeta(4));
                 		        if (!playerIn.capabilities.isCreativeMode)
                                 {
-            	            	    heldItem.stackSize = heldItem.stackSize - 8;
+            	            	    heldItem.shrink(8);
                                 }
                	                return true;
              	    	    }
@@ -274,7 +276,7 @@ public class Teapan extends Block
                     	        worldIn.setBlockState(pos, BlockLoader.teapan.getStateFromMeta(3));
                     	        if (!playerIn.capabilities.isCreativeMode)
                                 {
-            	            	    heldItem.stackSize = heldItem.stackSize - 8;
+            	            	    heldItem.shrink(8);
                                 }
                                 return true;
                     	    }

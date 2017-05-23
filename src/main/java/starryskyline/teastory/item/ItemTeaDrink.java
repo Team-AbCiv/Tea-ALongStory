@@ -1,17 +1,14 @@
 package starryskyline.teastory.item;
 
-import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import starryskyline.teastory.creativetab.CreativeTabsLoader;
 
@@ -27,7 +24,7 @@ public class ItemTeaDrink extends ItemFood
 	}
 	
 	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, List subItems)
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
 	{
 	    subItems.add(new ItemStack(itemIn, 1, 0));
 	    subItems.add(new ItemStack(itemIn, 1, 1));
@@ -62,7 +59,8 @@ public class ItemTeaDrink extends ItemFood
         super.onItemUseFinish(stack, worldIn, entityLiving);
         return new ItemStack(ItemLoader.cup, 1, stack.getItemDamage());
     }
-	
+
+    @Override
 	public EnumAction getItemUseAction(ItemStack itemStackIn)
     {
         return EnumAction.DRINK;

@@ -49,9 +49,10 @@ public class TeaDryingPan extends Block
     }
 	
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
-		if(heldItem != null)
+		ItemStack heldItem = playerIn.getHeldItem(hand);
+		if(!heldItem.isEmpty())
 		{
 			if(heldItem.getItem() == Items.FLINT_AND_STEEL)
 			{
@@ -63,17 +64,17 @@ public class TeaDryingPan extends Block
 			    return true;
 			}
 		}
-		if((worldIn.isRemote) && ((heldItem == null) || (Block.getBlockFromItem(heldItem.getItem()) != BlockLoader.tea_drying_pan)))
+		if((worldIn.isRemote) && !heldItem.isEmpty() || Block.getBlockFromItem(heldItem.getItem()) != BlockLoader.tea_drying_pan)
 		{
-		    playerIn.addChatMessage(new TextComponentTranslation("teastory.tea_drying_pan.message.1"));
+		    playerIn.sendMessage(new TextComponentTranslation("teastory.tea_drying_pan.message.1"));
 		}
 		return true;
 	}
 	
 	@Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand)
     {
 		((EntityPlayer) placer).addStat(AchievementLoader.teaDryingPan);
-		return super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
+		return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
     }
 }

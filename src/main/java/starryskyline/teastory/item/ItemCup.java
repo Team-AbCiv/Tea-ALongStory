@@ -1,17 +1,9 @@
 package starryskyline.teastory.item;
 
-import java.util.List;
-
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-import starryskyline.teastory.block.BlockLoader;
+import net.minecraft.util.NonNullList;
 
 public class ItemCup extends TSItem
 {
@@ -43,7 +35,7 @@ public class ItemCup extends TSItem
 	}
 	
 	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, List subItems)
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
 	{
 	    subItems.add(new ItemStack(itemIn, 1, 0));
 	    subItems.add(new ItemStack(itemIn, 1, 1));

@@ -1,11 +1,9 @@
 package starryskyline.teastory.block;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Nullable;
-
+import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -17,14 +15,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
@@ -48,21 +42,23 @@ public class Barrel extends Block
         this.setDefaultState(this.blockState.getBaseState().withProperty(TYPE, EnumType.EMPTY));
         this.setCreativeTab(CreativeTabsLoader.tabteastory);
 	}
-	
+
+	@Override
 	public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
+    @Override
     public boolean isFullCube(IBlockState state)
     {
         return false;
     }
 	
 	@Override
-	public ArrayList getDrops(IBlockAccess world, BlockPos pos, IBlockState blockstate, int fortune)
+	public ArrayList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, @Nonnull IBlockState blockstate, int fortune)
 	{
-	    ArrayList drops = new ArrayList();
+	    ArrayList<ItemStack> drops = new ArrayList<>();
 	    drops.add(new ItemStack(BlockLoader.barrel, 1));
 	    int meta = BlockLoader.barrel.getMetaFromState(blockstate);
 	    if ((meta == 1) || (meta == 2) || (meta == 3))
@@ -75,7 +71,8 @@ public class Barrel extends Block
         }
 	    return drops;
 	}
-	
+
+	@Override
 	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
         int meta = getMetaFromState(worldIn.getBlockState(pos));
@@ -107,10 +104,10 @@ public class Barrel extends Block
     }
 	
 	@Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand handIn)
     {
 		((EntityPlayer) placer).addStat(AchievementLoader.barrel);
-		return super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
+		return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer, handIn);
     }
 	
     @SideOnly(Side.CLIENT)
@@ -121,7 +118,7 @@ public class Barrel extends Block
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item itemIn, CreativeTabs tab, List list) {
+	public void getSubBlocks(@Nonnull Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
 	    list.add(new ItemStack(itemIn, 1, 0));
 	}
 	
@@ -160,41 +157,43 @@ public class Barrel extends Block
         EnumType type = (EnumType) state.getValue(TYPE);
         return type.getID();
     }
-    
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
+    	ItemStack heldItem = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
         {
         	switch(getMetaFromState(worldIn.getBlockState(pos)))
         	{
         	    case 1:
-        	    	if ((heldItem != null) && !(heldItem.getItem() instanceof ItemSpade))
+        	    	if (!heldItem.isEmpty() && !(heldItem.getItem() instanceof ItemSpade))
         	    	{
-        	    		playerIn.addChatMessage(new TextComponentTranslation("teastory.barrel.message.2"));
+        	    		playerIn.sendMessage(new TextComponentTranslation("teastory.barrel.message.2"));
         	    	}
         	    	return true;
         	    case 2:
-        	    	if ((heldItem == null) || (heldItem != null) && !(heldItem.getItem() instanceof ItemSpade))
+        	    	if (!heldItem.isEmpty() && !(heldItem.getItem() instanceof ItemSpade))
         	    	{
-        	    		playerIn.addChatMessage(new TextComponentTranslation("teastory.barrel.message.3"));
+        	    		playerIn.sendMessage(new TextComponentTranslation("teastory.barrel.message.3"));
         	    	}
         	    	return true;
         	    case 3:
-        	    	if ((heldItem == null) || (heldItem != null) && !(heldItem.getItem() instanceof ItemSpade))
+        	    	if (!heldItem.isEmpty() && !(heldItem.getItem() instanceof ItemSpade))
         	    	{
-        	    		playerIn.addChatMessage(new TextComponentTranslation("teastory.barrel.message.4"));
+        	    		playerIn.sendMessage(new TextComponentTranslation("teastory.barrel.message.4"));
         	    	}
         	    	return true;
         	    case 4:
-        	    	if ((heldItem == null) || (heldItem != null) && !(heldItem.getItem() instanceof ItemSpade))
+        	    	if (!heldItem.isEmpty() && !(heldItem.getItem() instanceof ItemSpade))
         	    	{
-        	    		playerIn.addChatMessage(new TextComponentTranslation("teastory.barrel.message.5"));
+        	    		playerIn.sendMessage(new TextComponentTranslation("teastory.barrel.message.5"));
         	    	}
         	    	return true;
         	    default:
-        	    	if ((heldItem == null) || (heldItem != null) && !(heldItem.getItem() == ItemLoader.half_dried_tea && heldItem.stackSize >=8) && (Block.getBlockFromItem(heldItem.getItem()) != BlockLoader.barrel))
+        	    	if (!heldItem.isEmpty() && !(heldItem.getItem() == ItemLoader.half_dried_tea && heldItem.getCount() >= 8) && (Block.getBlockFromItem(heldItem.getItem()) != BlockLoader.barrel))
         	    	{
-        	    		playerIn.addChatMessage(new TextComponentTranslation("teastory.barrel.message.1"));
+        	    		playerIn.sendMessage(new TextComponentTranslation("teastory.barrel.message.1"));
         	    	}
         	    	return true;
         	}
@@ -204,7 +203,7 @@ public class Barrel extends Block
             switch(getMetaFromState(worldIn.getBlockState(pos)))
         	{
         	    case 1:
-        	    	if (heldItem != null)
+        	    	if (!heldItem.isEmpty())
                     {
         	    		if (heldItem.getItem() instanceof ItemSpade)
         	    		{
@@ -213,7 +212,7 @@ public class Barrel extends Block
         	    			    heldItem.setItemDamage(heldItem.getItemDamage() + 1);
                             }
         	    			worldIn.setBlockState(pos, BlockLoader.barrel.getStateFromMeta(0));
-        	                playerIn.worldObj.spawnEntityInWorld(new EntityItem(playerIn.worldObj, playerIn.posX + 0.5D, playerIn.posY + 1.5D, playerIn.posZ + 0.5D, 
+        	                playerIn.world.spawnEntity(new EntityItem(playerIn.world, playerIn.posX + 0.5D, playerIn.posY + 1.5D, playerIn.posZ + 0.5D,
         	                        new ItemStack(ItemLoader.half_dried_tea, 8)));
         	    			return true;
         	    		}
@@ -226,7 +225,7 @@ public class Barrel extends Block
                 	}
         	       	else return false;
         	    case 2:
-        	    	if (heldItem != null)
+        	    	if (!heldItem.isEmpty())
                     {
         	    		if (heldItem.getItem() instanceof ItemSpade)
         	    		{
@@ -235,7 +234,7 @@ public class Barrel extends Block
             	    			heldItem.setItemDamage(heldItem.getItemDamage() + 1);
                 		    }
         	    			worldIn.setBlockState(pos, BlockLoader.barrel.getStateFromMeta(0));
-        	                playerIn.worldObj.spawnEntityInWorld(new EntityItem(playerIn.worldObj, playerIn.posX + 0.5D, playerIn.posY + 1.5D, playerIn.posZ + 0.5D, 
+        	                playerIn.world.spawnEntity(new EntityItem(playerIn.world, playerIn.posX + 0.5D, playerIn.posY + 1.5D, playerIn.posZ + 0.5D,
         	                   		new ItemStack(ItemLoader.half_dried_tea, 8)));
         	    			return true;
         	    		}
@@ -243,7 +242,7 @@ public class Barrel extends Block
                     }
         	    	
         	    case 3:
-        	    	if (heldItem != null)
+        	    	if (!heldItem.isEmpty())
                     {
             	    	if (heldItem.getItem() instanceof ItemSpade)
     	        		{
@@ -252,7 +251,7 @@ public class Barrel extends Block
             	    			heldItem.setItemDamage(heldItem.getItemDamage() + 1);
                 		    }
     	        			worldIn.setBlockState(pos, BlockLoader.barrel.getStateFromMeta(0));
-        	                playerIn.worldObj.spawnEntityInWorld(new EntityItem(playerIn.worldObj, playerIn.posX + 0.5D, playerIn.posY + 1.5D, playerIn.posZ + 0.5D, 
+        	                playerIn.world.spawnEntity(new EntityItem(playerIn.world, playerIn.posX + 0.5D, playerIn.posY + 1.5D, playerIn.posZ + 0.5D,
         	                   		new ItemStack(ItemLoader.half_dried_tea, 8)));
     	    		    	return true;
     	    	    	}
@@ -260,7 +259,7 @@ public class Barrel extends Block
                     }
         	    	else return false;
         	    case 4:
-        	    	if (heldItem != null)
+        	    	if (!heldItem.isEmpty())
                     {
         	    	    if (heldItem.getItem() instanceof ItemSpade)
     	    		    {
@@ -269,7 +268,7 @@ public class Barrel extends Block
             	    			heldItem.setItemDamage(heldItem.getItemDamage() + 1);
                 		    }
     	    			    worldIn.setBlockState(pos, BlockLoader.barrel.getStateFromMeta(0));
-    	                    playerIn.worldObj.spawnEntityInWorld(new EntityItem(playerIn.worldObj, playerIn.posX + 0.5D, playerIn.posY + 1.5D, playerIn.posZ + 0.5D, 
+    	                    playerIn.world.spawnEntity(new EntityItem(playerIn.world, playerIn.posX + 0.5D, playerIn.posY + 1.5D, playerIn.posZ + 0.5D,
     	                    	    new ItemStack(ItemLoader.black_tea_leaf, 8)));
     	    			    return true;
     	    		    }
@@ -277,14 +276,14 @@ public class Barrel extends Block
                     }
     	    		else return false;
                 default:
-                	if (heldItem != null)
+                	if (!heldItem.isEmpty())
                     {
-                		if (heldItem.getItem() == ItemLoader.half_dried_tea && heldItem.stackSize >=8)
+                		if (heldItem.getItem() == ItemLoader.half_dried_tea && heldItem.getCount() >= 8)
                 		{
         	                worldIn.setBlockState(pos, BlockLoader.barrel.getStateFromMeta(1));
         	                if (!playerIn.capabilities.isCreativeMode)
                             {
-        	            	    heldItem.stackSize = heldItem.stackSize - 8;
+        	            	    heldItem.shrink(8);
                             }
                             return true;
                 		}

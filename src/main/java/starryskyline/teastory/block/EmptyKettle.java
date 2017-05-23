@@ -1,10 +1,5 @@
 package starryskyline.teastory.block;
 
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
@@ -18,10 +13,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -49,12 +41,8 @@ public class EmptyKettle extends Kettle
     public IBlockState getStateFromMeta(int meta)
     {
         EnumFacing facing = EnumFacing.getHorizontal(meta & 3);
-        Boolean water = Boolean.valueOf((meta & 4) != 0);
-        Boolean boiled = false;
-        if (water)
-        {
-            boiled = Boolean.valueOf((meta >> 3) != 0);
-        }
+        boolean water = (meta & 4) != 0;
+        boolean boiled = water && (meta >> 3) != 0;
         return this.getDefaultState().withProperty(FACING, facing).withProperty(WATER, water).withProperty(BOILED, boiled);
     }
 
@@ -62,25 +50,26 @@ public class EmptyKettle extends Kettle
     public int getMetaFromState(IBlockState state)
     {
     	int facing = state.getValue(FACING).getHorizontalIndex();
-        int water = state.getValue(WATER).booleanValue() ? 4 : 0;
-        int boiled = state.getValue(BOILED).booleanValue() ? 8 : 0;
+        int water = state.getValue(WATER) ? 4 : 0;
+        int boiled = state.getValue(BOILED) ? 8 : 0;
         return facing | water | boiled;
     }
     
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-    	super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+    	super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
     	if (worldIn.isRemote)
         {
             return true;
         }
     	else
         {
+        	ItemStack heldItem = playerIn.getHeldItem(hand);
     		int meta = getMetaFromState(state);
     	    if ((meta & 12) == 0)
     		{
-    			if (heldItem != null)
+    			if (!heldItem.isEmpty())
     			{
     				if (heldItem.getItem() == Items.WATER_BUCKET)
     				{
@@ -97,18 +86,18 @@ public class EmptyKettle extends Kettle
     		}
     		else if((meta & 12) == 12)
     		{
-    			if (heldItem != null)
+    			if (!heldItem.isEmpty())
     			{
     				if (heldItem.getItem() instanceof ItemCup)
     				{
     					if (!playerIn.capabilities.isCreativeMode)
                         {
-    						heldItem.stackSize--;
+    						heldItem.shrink(1);
         		    	}
     					int meta2 = heldItem.getItemDamage();
         	    		if (!playerIn.inventory.addItemStackToInventory(new ItemStack(ItemLoader.hot_water, 1, meta2)))
                         {
-                            playerIn.getEntityWorld().spawnEntityInWorld(new EntityItem(playerIn.getEntityWorld(), playerIn.posX + 0.5D, playerIn.posY + 1.5D, playerIn.posZ + 0.5D, 
+                            playerIn.getEntityWorld().spawnEntity(new EntityItem(playerIn.getEntityWorld(), playerIn.posX + 0.5D, playerIn.posY + 1.5D, playerIn.posZ + 0.5D,
                             		new ItemStack(ItemLoader.hot_water, 1, meta2)));
                         }
                 		else if (playerIn instanceof EntityPlayerMP)
@@ -127,7 +116,7 @@ public class EmptyKettle extends Kettle
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list)
     {
         list.add(new ItemStack(itemIn, 1, 0));
         list.add(new ItemStack(itemIn, 1, 4));
@@ -135,24 +124,16 @@ public class EmptyKettle extends Kettle
     }
     
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand)
     {
-        IBlockState origin = super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
+        IBlockState origin = super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
         return origin.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
     }
     
     @Override
     public int damageDropped(IBlockState state)
     {
-    	if (state.getValue(WATER).booleanValue())
-    	{
-    		if (state.getValue(BOILED).booleanValue())
-    		{
-    			return 12;
-    		}
-    		else return 4;
-    	}
-    	else return 0;
+    	return state.getValue(WATER) ? state.getValue(BOILED) ? 12 : 4 : 0;
     }
     
     public static String getSpecialName(ItemStack stack)

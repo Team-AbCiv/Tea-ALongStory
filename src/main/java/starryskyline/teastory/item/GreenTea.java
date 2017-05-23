@@ -59,7 +59,7 @@ public class GreenTea extends ItemTeaDrink
         {
         	if (!entityplayer.inventory.addItemStackToInventory(new ItemStack(ItemLoader.tea_residue, 1, 0)))
             {
-                world.spawnEntityInWorld(new EntityItem(world, entityplayer.posX + 0.5D, entityplayer.posY + 1.5D, entityplayer.posZ + 0.5D, 
+                world.spawnEntity(new EntityItem(world, entityplayer.posX + 0.5D, entityplayer.posY + 1.5D, entityplayer.posZ + 0.5D,
                 		new ItemStack(ItemLoader.tea_residue, 1, 0)));
             }
         }

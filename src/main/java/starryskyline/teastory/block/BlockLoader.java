@@ -184,14 +184,14 @@ public class BlockLoader
     
     private static void register(Block block, String name)
     {
-        GameRegistry.registerBlock(block, name);
+        GameRegistry.register(block.setRegistryName(name));
     }
     
     private static void register(Block block, ItemBlock itemBlock, String name)
     {
-        GameRegistry.registerBlock(block, null, name);
-        GameRegistry.registerItem(itemBlock, name);
-        GameData.getBlockItemMap().put(block, itemBlock);
+        GameRegistry.register(block.setRegistryName(name));
+        GameRegistry.register(itemBlock.setRegistryName(name));
+        GameData.getBlockItemMap().put(block, itemBlock); //TODO Check if it really works, or redundant
     }
     
     @SideOnly(Side.CLIENT)

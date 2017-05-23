@@ -45,7 +45,7 @@ public class ContainerTeaStove extends Container
         	@Override
             public boolean isItemValid(ItemStack stack)
             {
-                return stack != null && stack.getItem() == ItemLoader.half_dried_tea && super.isItemValid(stack);
+                return !stack.isEmpty() && stack.getItem() == ItemLoader.half_dried_tea && super.isItemValid(stack);
             }
         });
         this.addSlotToContainer(new SlotItemHandler(this.fuelItem, 0, 53, 56));
@@ -80,7 +80,7 @@ public class ContainerTeaStove extends Container
 
         if (slot == null || !slot.getHasStack())
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         ItemStack newStack = slot.getStack(), oldStack = newStack.copy();
@@ -106,19 +106,19 @@ public class ContainerTeaStove extends Container
 
         if (!isMerged)
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
-        if (newStack.stackSize == 0)
+        if (newStack.getCount() == 0)
         {
-            slot.putStack(null);
+            slot.putStack(ItemStack.EMPTY);
         }
         else
         {
             slot.onSlotChanged();
         }
 
-        slot.onPickupFromSlot(playerIn, newStack);
+        slot.onTake(playerIn, newStack);
 
         return oldStack;
     }

@@ -5,19 +5,16 @@ import java.util.List;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import starryskyline.teastory.achievement.AchievementLoader;
-import starryskyline.teastory.common.ConfigLoader;
 import starryskyline.teastory.creativetab.CreativeTabsLoader;
 
 public class HotWater extends ItemFood
@@ -32,13 +29,13 @@ public class HotWater extends ItemFood
         this.setUnlocalizedName("hot_water");
     }
     
-    public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean b)
+    public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List<String> list, boolean b)
     {
         list.add(I18n.translateToLocal("teastory.tooltip.hot_water"));
     }
     
     @Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, List subItems)
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
 	{
 	    subItems.add(new ItemStack(itemIn, 1, 0));
 	    subItems.add(new ItemStack(itemIn, 1, 1));

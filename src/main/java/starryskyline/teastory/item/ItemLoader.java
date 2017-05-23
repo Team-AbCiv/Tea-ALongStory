@@ -141,7 +141,7 @@ public class ItemLoader
 
     private static void register(Item item)
     {
-        GameRegistry.registerItem(item, item.getUnlocalizedName().substring(5));
+        GameRegistry.register(item.setRegistryName(item.getUnlocalizedName().substring(5))); //This is weird - why start from index 5?
     }
     
     @SideOnly(Side.CLIENT)

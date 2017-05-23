@@ -2,14 +2,10 @@ package starryskyline.teastory.crafting;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.*;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import starryskyline.teastory.block.BlockLoader;
-import starryskyline.teastory.common.ConfigLoader;
 import starryskyline.teastory.item.ItemLoader;
 
 public class CraftingLoader

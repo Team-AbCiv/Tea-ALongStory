@@ -1,7 +1,7 @@
 package starryskyline.teastory.creativetab;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import starryskyline.teastory.item.ItemLoader;
 
@@ -14,9 +14,9 @@ public class CreativeTabsLoader
         tabteastory = new CreativeTabs("tabteastory")
         {
             @Override
-            public Item getTabIconItem()
+            public ItemStack getTabIconItem()
             {
-                return ItemLoader.tea_leaf;
+                return new ItemStack(ItemLoader.tea_leaf);
             }
         };
     }

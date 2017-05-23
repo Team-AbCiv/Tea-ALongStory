@@ -1,6 +1,5 @@
 package starryskyline.teastory.item;
 
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -14,7 +13,8 @@ public class Record extends ItemRecord
 		this.setUnlocalizedName(name2);
 		this.setCreativeTab(CreativeTabsLoader.tabteastory);
 	}
-	
+
+	@Override
 	public ResourceLocation getRecordResource(String name)
     {
         return new ResourceLocation(TeaStory.MODID, name);

@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
@@ -23,7 +24,7 @@ public class TeaResidue extends TSItem
         this.setHasSubtypes(true);
 	}
 	
-	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean b)
+	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List<String> list, boolean b)
     {
         list.add(I18n.translateToLocal("teastory.tooltip.tea_residue"));
     }
@@ -35,15 +36,15 @@ public class TeaResidue extends TSItem
 	}
 
 	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, List subItems)
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
 	{
 	    subItems.add(new ItemStack(itemIn, 1, 0));
 	    subItems.add(new ItemStack(itemIn, 1, 1));
 	}
 	
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-		if (ItemDye.applyBonemeal(stack, worldIn, pos, playerIn))
+		if (ItemDye.applyBonemeal(playerIn.getHeldItem(hand), worldIn, pos, playerIn, hand))
         {
 			if (!worldIn.isRemote)
             {

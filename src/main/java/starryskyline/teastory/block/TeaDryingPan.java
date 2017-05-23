@@ -1,7 +1,5 @@
 package starryskyline.teastory.block;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -18,7 +16,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import starryskyline.teastory.achievement.AchievementLoader;
-import starryskyline.teastory.block.LitTeaDryingPan.EnumType;
 import starryskyline.teastory.creativetab.CreativeTabsLoader;
 
 public class TeaDryingPan extends Block
@@ -32,17 +29,20 @@ public class TeaDryingPan extends Block
         this.setCreativeTab(CreativeTabsLoader.tabteastory);
         this.setUnlocalizedName("tea_drying_pan");
 	}
-	
+
+	@Override
 	public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
+    @Override
     public boolean isFullCube(IBlockState state)
     {
         return false;
     }
-    
+
+    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
         return TEADRYINGPAN_AABB;

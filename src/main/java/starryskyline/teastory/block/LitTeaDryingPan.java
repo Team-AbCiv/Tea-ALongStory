@@ -44,11 +44,13 @@ public class LitTeaDryingPan extends Block
         this.isBurning = true;
 	}
 
+	@Override
 	public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
+    @Override
     public boolean isFullCube(IBlockState state)
     {
         return false;
@@ -61,12 +63,14 @@ public class LitTeaDryingPan extends Block
 	    drops.add(new ItemStack(BlockLoader.tea_drying_pan, 1));
 		return drops;
 	}
-    
+
+	@Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
         return TEADRYINGPAN_AABB;
     }
-	
+
+    @Override
 	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
 		if(!worldIn.isRemote)

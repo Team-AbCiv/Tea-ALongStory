@@ -26,7 +26,7 @@ public class ItemTeaLeaf extends TSItem
 		{
 			return EnumActionResult.SUCCESS;
 		}
-		else if ((worldIn.getBlockState(pos).getBlock() == BlockLoader.empty_kettle) && (stack.getCount() >=8))
+		else if ((worldIn.getBlockState(pos).getBlock() == BlockLoader.empty_kettle) && (stack.getCount() >= 8))
 		{
 			int meta = BlockLoader.empty_kettle.getMetaFromState(worldIn.getBlockState(pos));
 			if ((meta & 12) == 12)

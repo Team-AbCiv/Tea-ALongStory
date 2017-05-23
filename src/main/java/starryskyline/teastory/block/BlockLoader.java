@@ -5,16 +5,12 @@ import com.google.common.base.Function;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -22,7 +18,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import starryskyline.teastory.TeaStory;
 import starryskyline.teastory.creativetab.CreativeTabsLoader;
-import starryskyline.teastory.item.ItemLoader;
 
 public class BlockLoader
 {
@@ -42,16 +37,9 @@ public class BlockLoader
 
     public BlockLoader(FMLPreInitializationEvent event)
     {
-    	register(lit_tea_drying_pan, new ItemBlockMeta(lit_tea_drying_pan, lit_tea_drying_pan, new Function<ItemStack, String>()
-        {
-            @Override
-            public String apply(ItemStack input)
-            {
-                return LitTeaDryingPan.getSpecialName(input);
-            }
-        }), "lit_tea_drying_pan");
-    	register(tea_drying_pan, "tea_drying_pan");
-    	register(tea_stove, "tea_stove");
+    	register(lit_tea_drying_pan, "lit_tea_drying_pan");
+    	register(tea_drying_pan, new ItemBlock(tea_drying_pan), "tea_drying_pan");
+    	register(tea_stove, new ItemBlock(tea_stove), "tea_stove");
     	register(lit_tea_stove, "lit_tea_stove");
     	register(teapan, new ItemBlockMeta(teapan, teapan, new Function<ItemStack, String>()
         {

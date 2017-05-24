@@ -16,8 +16,14 @@ compileJava {
 }
 
 version = mod_version
-group= "com.starryskyline.teastory"
+group = "com.starryskyline.teastory"
 archivesBaseName = "teastory"
+
+repositories {
+    maven {
+        url = "http://dvs1.progwml6.com/files/maven"
+    }
+}
 
 minecraft {
     version = minecraft_version + "-" + forge_version
@@ -27,6 +33,10 @@ minecraft {
 }
 
 dependencies {
+    // For further usage
+    compile group: 'mezz.jei', name: 'jei_1.11.2', version: '4.3.6.280', classifier: 'api'
+
+    runtime group: 'mezz.jei', name: 'jei_1.11.2', version: '4.3.6.280'
 }
 
 processResources {

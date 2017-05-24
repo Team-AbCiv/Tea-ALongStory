@@ -47,17 +47,20 @@ public class Teapan extends Block
         this.setDefaultState(this.blockState.getBaseState().withProperty(TYPE, EnumType.EMPTY));
         this.setCreativeTab(CreativeTabsLoader.tabteastory);
 	}
-	
+
+	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
         return TEAPAN_AABB;
     }
-	
+
+    @Override
 	public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
+    @Override
     public boolean isFullCube(IBlockState state)
     {
         return false;
@@ -68,26 +71,26 @@ public class Teapan extends Block
 	{
 	    ArrayList<ItemStack> drops = new ArrayList<>();
 	    drops.add(new ItemStack(BlockLoader.teapan, 1));
-	    int meta = BlockLoader.teapan.getMetaFromState(blockstate);
-	    if (meta == 1)
-	    {
-    		drops.add(new ItemStack(ItemLoader.tea_leaf, 8));
-    	}
-	    else if (meta == 2)
-    	    {
-    	    	drops.add(new ItemStack(ItemLoader.dried_tea, 8));
-		    }
-	        else if (meta == 3)
-            	{
-            		drops.add(new ItemStack(ItemLoader.half_dried_tea, 8));
-            	}
-	            else if (meta == 4)
-                    {
-                    	drops.add(new ItemStack(ItemLoader.wet_tea, 8));
-                    }
+	    switch(BlockLoader.teapan.getMetaFromState(blockstate)) {
+			case 1:
+				drops.add(new ItemStack(ItemLoader.tea_leaf, 8));
+				break;
+			case 2:
+				drops.add(new ItemStack(ItemLoader.dried_tea, 8));
+				break;
+			case 3:
+				drops.add(new ItemStack(ItemLoader.half_dried_tea, 8));
+				break;
+			case 4:
+				drops.add(new ItemStack(ItemLoader.wet_tea, 8));
+				break;
+			default:
+				break;
+		}
 	    return drops;
 	}
-	
+
+	@Override
 	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
         super.updateTick(worldIn, pos, state, rand);
@@ -99,11 +102,7 @@ public class Teapan extends Block
         else if (meta == 1 || meta == 3 || meta == 4)
        	{
         	float f = getChance(this, worldIn, pos);
-            if (f == 0.0F)
-            { 
-              	return;
-            }
-            else if (rand.nextInt((int)(25.0F / f) + 1) == 0)      		
+            if (f != 0.0 && rand.nextInt((int)(25.0F / f) + 1) == 0)
             {
             	switch (meta)
             	{
@@ -170,36 +169,19 @@ public class Teapan extends Block
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, new IProperty[] { TYPE });
+        return new BlockStateContainer(this, TYPE);
     }
     
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        return getDefaultState().withProperty(TYPE, getState(meta));
-    }
-    
-    public Comparable getState(int meta)
-    {
-    	switch(meta)
-    	{
-    	case 1:
-    		return EnumType.FULL;
-    	case 2:
-            return EnumType.DRIED;
-    	case 3:
-        	return EnumType.MATCHA;
-    	case 4:
-            return EnumType.WET;
-        default:
-            return EnumType.EMPTY;
-    	}
+        return getDefaultState().withProperty(TYPE, EnumType.values()[meta]); //TODO Optimization via caching Enum::values?
     }
 
     @Override
     public int getMetaFromState(IBlockState state)
     {
-        EnumType type = (EnumType) state.getValue(TYPE);
+        EnumType type = state.getValue(TYPE);
         return type.getID();
     }
 
@@ -208,22 +190,19 @@ public class Teapan extends Block
     {
         if (worldIn.isRemote)
         {
-        	switch(getMetaFromState(worldIn.getBlockState(pos)))
+        	if (state.getValue(TYPE) == EnumType.EMPTY)
         	{
-        	    case 0:
-        	    	ItemStack heldItem = playerIn.getHeldItem(hand);
-        	    	if (!heldItem.isEmpty() || !(heldItem.getItem() == ItemLoader.half_dried_tea && heldItem.getCount() >= 8) && !(heldItem.getItem() == ItemLoader.tea_leaf && heldItem.getCount() >= 8) && !(heldItem.getItem() == ItemLoader.wet_tea && heldItem.getCount() >= 8) && (Block.getBlockFromItem(heldItem.getItem()) != BlockLoader.teapan))
-        	    	{
-        	    		playerIn.sendMessage(new TextComponentTranslation("teastory.teapan.message"));
-        	    	}
-        	    	return true;
-        	    default:
-        	    	return true;
+				ItemStack heldItem = playerIn.getHeldItem(hand);
+				if (heldItem.isEmpty() || heldItem.getCount() < 8 && !(heldItem.getItem() == ItemLoader.half_dried_tea || heldItem.getItem() == ItemLoader.tea_leaf || heldItem.getItem() == ItemLoader.wet_tea))
+				{
+					playerIn.sendMessage(new TextComponentTranslation("teastory.teapan.message"));
+				}
         	}
+        	return true;
         }
         else
         {
-            switch(getMetaFromState(worldIn.getBlockState(pos)))
+            switch(getMetaFromState(state))
         	{
         	    case 1:
         	       	worldIn.setBlockState(pos, BlockLoader.teapan.getDefaultState());
@@ -255,12 +234,12 @@ public class Teapan extends Block
                 		{
                 	    	if (heldItem.getItem() == ItemLoader.tea_leaf)
                     		{
-                	                worldIn.setBlockState(pos, BlockLoader.teapan.getStateFromMeta(1));
-                	                if (!playerIn.capabilities.isCreativeMode)
-                                    {
-                	            	    heldItem.shrink(8);
-                                    }
-        	                        return true;
+								worldIn.setBlockState(pos, BlockLoader.teapan.getStateFromMeta(1));
+								if (!playerIn.capabilities.isCreativeMode)
+								{
+									heldItem.shrink(8);
+								}
+								return true;
                 	    	}
                 			else if (heldItem.getItem() == ItemLoader.wet_tea)
                  	      	{	
@@ -289,7 +268,7 @@ public class Teapan extends Block
         }
     }
 	
-	public static final PropertyEnum TYPE = PropertyEnum.create("type", Teapan.EnumType.class);
+	public static final PropertyEnum<EnumType> TYPE = PropertyEnum.create("type", Teapan.EnumType.class);
 	
 	public enum EnumType implements IStringSerializable
     {
@@ -302,7 +281,7 @@ public class Teapan extends Block
 	    private int ID;
 	    private String name;
 	    
-	    private EnumType(int ID, String name)
+	    EnumType(int ID, String name)
         {
 	        this.ID = ID;
 	        this.name = name;

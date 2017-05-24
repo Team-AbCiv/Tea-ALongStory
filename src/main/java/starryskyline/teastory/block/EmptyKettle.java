@@ -21,6 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import starryskyline.teastory.creativetab.CreativeTabsLoader;
 import starryskyline.teastory.item.ItemCup;
 import starryskyline.teastory.item.ItemLoader;
+import starryskyline.teastory.item.ItemTeaLeaf;
 
 public class EmptyKettle extends Kettle
 {
@@ -69,20 +70,16 @@ public class EmptyKettle extends Kettle
     		int meta = getMetaFromState(state);
     	    if ((meta & 12) == 0)
     		{
-    			if (!heldItem.isEmpty())
-    			{
-    				if (heldItem.getItem() == Items.WATER_BUCKET)
-    				{
-    					if (!playerIn.capabilities.isCreativeMode)
-                        {
-                            playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, new ItemStack(Items.BUCKET));
-                        }
-    					worldIn.setBlockState(pos, BlockLoader.empty_kettle.getStateFromMeta(meta | 4));
-    					return true;
-    				}
-    				else return false;
-    			}
-    			else return false;
+    			if (!heldItem.isEmpty() && heldItem.getItem() == Items.WATER_BUCKET)
+				{
+					if (!playerIn.capabilities.isCreativeMode)
+					{
+						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, new ItemStack(Items.BUCKET));
+					}
+					worldIn.setBlockState(pos, BlockLoader.empty_kettle.getStateFromMeta(meta | 4));
+					return true;
+				}
+				else return false;
     		}
     		else if((meta & 12) == 12)
     		{
@@ -105,7 +102,26 @@ public class EmptyKettle extends Kettle
                             ((EntityPlayerMP)playerIn).sendContainerToPlayer(playerIn.inventoryContainer);
                         }
         	    		return true;
-    				}
+    				} else if (heldItem.getItem() instanceof ItemTeaLeaf) {
+						if (!playerIn.capabilities.isCreativeMode)
+						{
+							heldItem.shrink(8);
+						}
+						IBlockState newState = null;
+						if (heldItem.getItem() == ItemLoader.black_tea_leaf) {
+							newState = BlockLoader.blacktea_kettle.getDefaultState();
+						} else if (heldItem.getItem() == ItemLoader.burnt_tea) {
+							newState = BlockLoader.burntgreentea_kettle.getDefaultState();
+						} else if (heldItem.getItem() == ItemLoader.dried_tea) {
+							newState = BlockLoader.greentea_kettle.getDefaultState();
+						} else if (heldItem.getItem() == ItemLoader.matcha) {
+							newState = BlockLoader.matcha_kettle.getDefaultState();
+						}
+						if (newState != null) {
+							worldIn.setBlockState(pos, newState.withProperty(FACING, state.getValue(FACING)));
+						}
+						return true;
+					}
     				else return false;
     			}
     			else return false;

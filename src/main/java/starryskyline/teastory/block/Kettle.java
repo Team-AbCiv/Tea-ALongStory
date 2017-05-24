@@ -55,7 +55,7 @@ public class Kettle extends Block
     	else
         {
             ItemStack heldItem = playerIn.getHeldItem(hand);
-    		if (!heldItem.isEmpty())
+    		if (heldItem.isEmpty())
     		{
     			if (!playerIn.inventory.addItemStackToInventory(new ItemStack(state.getBlock(), 1, damageDropped(state))))
                 {

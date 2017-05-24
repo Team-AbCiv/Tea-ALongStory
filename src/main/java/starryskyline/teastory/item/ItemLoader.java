@@ -3,12 +3,9 @@ package starryskyline.teastory.item;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemRecord;
-import net.minecraft.item.ItemSoup;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -17,7 +14,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import starryskyline.teastory.TeaStory;
 import starryskyline.teastory.block.BlockLoader;
-import starryskyline.teastory.creativetab.CreativeTabsLoader;
 
 public class ItemLoader
 {

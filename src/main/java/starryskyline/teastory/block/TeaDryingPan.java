@@ -52,21 +52,16 @@ public class TeaDryingPan extends Block
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		ItemStack heldItem = playerIn.getHeldItem(hand);
-		if(!heldItem.isEmpty())
+		if(!heldItem.isEmpty() && heldItem.getItem() == Items.FLINT_AND_STEEL)
 		{
-			if(heldItem.getItem() == Items.FLINT_AND_STEEL)
+			if (!playerIn.capabilities.isCreativeMode)
 			{
-				if (!playerIn.capabilities.isCreativeMode)
-                {
-	    			heldItem.setItemDamage(heldItem.getItemDamage() + 1);
-    		    }
-			    worldIn.setBlockState(pos, BlockLoader.lit_tea_drying_pan.getStateFromMeta(1));
-			    return true;
+				heldItem.setItemDamage(heldItem.getItemDamage() + 1);
 			}
-		}
-		if((worldIn.isRemote) && !heldItem.isEmpty() || Block.getBlockFromItem(heldItem.getItem()) != BlockLoader.tea_drying_pan)
-		{
-		    playerIn.sendMessage(new TextComponentTranslation("teastory.tea_drying_pan.message.1"));
+			worldIn.setBlockState(pos, BlockLoader.lit_tea_drying_pan.getStateFromMeta(1));
+			return true;
+		} else if (worldIn.isRemote) {
+			playerIn.sendMessage(new TextComponentTranslation("teastory.tea_drying_pan.message.1"));
 		}
 		return true;
 	}

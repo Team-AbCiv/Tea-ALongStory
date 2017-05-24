@@ -129,14 +129,13 @@ public class FullKettle extends Kettle
     @Override
     public int damageDropped(IBlockState state)
     {
-    	Item.getItemFromBlock(this).setMaxDamage(16);
-        return (state.getValue(TYPE).ordinal() << 2);
+        return state.getValue(TYPE).ordinal() << 2;
     }
     
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
-		itemIn.setMaxDamage(16); //TODO Is this really feasible? Move into constructor?
+	public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list)
+	{
 	    list.add(new ItemStack(itemIn, 1, 0));
 	}
 	

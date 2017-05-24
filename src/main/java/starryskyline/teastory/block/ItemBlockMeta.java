@@ -8,6 +8,11 @@ import net.minecraft.item.ItemStack;
 
 public class ItemBlockMeta extends ItemMultiTexture
 {
+    public ItemBlockMeta(Block block, Block block2, Function<ItemStack, String> nameFunction, int maxDamage) {
+        super(block, block, nameFunction::apply);
+        this.setMaxDamage(maxDamage);
+    }
+
 	public ItemBlockMeta(Block block, Block block2, Function<ItemStack, String> nameFunction)
     {
 		super(block, block, nameFunction::apply); //TODO Guava's Function returns @Nullable type
